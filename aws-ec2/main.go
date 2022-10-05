@@ -3,14 +3,14 @@ package main
 import (
 	"context"
 
-	"github.com/ashwinpnr/golang-samples/aws-ec2/ec2"
+	"github.com/ashwinpnr/golang-samples/aws-ec2/ec2module"
 )
 
 func main() {
 
 	ctx := context.Background()
 	region := "ap-south-1"
-	ec2.ListEc2Instances(ctx, region)
+	ec2module.ListEc2Instances(ctx, region)
 	/*
 		var (
 			instanceId string
