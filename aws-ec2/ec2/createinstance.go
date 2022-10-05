@@ -1,4 +1,4 @@
-package main
+package ec2
 
 import (
 	"context"
@@ -13,7 +13,15 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/secretsmanager"
 )
 
-func createEC2(ctx context.Context, region string) (string, error) {
+type EC2RunInstanceAPI interface {
+	RunInstances(ctx context.Context, params *ec2.RunInstancesInput, optFns ...func(*ec2.Options)) (*ec2.RunInstancesOutput, error)
+}
+
+func CreateEc2Instance(ctx context.Context, params *ec2.RunInstancesInput, client EC2RunInstanceAPI) (*ec2.RunInstancesOutput, error) {
+	return client.RunInstances(ctx, params)
+}
+
+func CreateEC2(ctx context.Context, region string) (string, error) {
 	name := "Name"
 	value := "golang-instance"
 	secretName := "go-aws-ec2-pem"
@@ -44,6 +52,7 @@ func createEC2(ctx context.Context, region string) (string, error) {
 			return "", fmt.Errorf("WriteFile (keypair) error: %s", err)
 		}
 
+		// Push PEM file contents into AWS Secret manager
 		secretClient := secretsmanager.NewFromConfig(cfg)
 		secretDescription := "Contain contents of file " + secretName + ".pem"
 		secretClient.CreateSecret(ctx, &secretsmanager.CreateSecretInput{Name: &secretName,
@@ -63,7 +72,7 @@ func createEC2(ctx context.Context, region string) (string, error) {
 				Values: []string{"hvm"},
 			},
 		},
-		Owners: []string{"099720109477"}, // see https://ubuntu.com/server/docs/cloud-images/amazon-ec2
+		Owners: []string{"099720109477"},
 	})
 	if err != nil {
 		return "", fmt.Errorf("DescribeImages error: %s", err)
@@ -72,7 +81,7 @@ func createEC2(ctx context.Context, region string) (string, error) {
 		return "", fmt.Errorf("describeImages has empty length (%d)", len(describeImages.Images))
 	}
 
-	runInstance, err := ec2Client.RunInstances(ctx, &ec2.RunInstancesInput{
+	runInstance, err := CreateEc2Instance(ctx, &ec2.RunInstancesInput{
 		ImageId:      describeImages.Images[0].ImageId,
 		InstanceType: types.InstanceTypeT3Micro,
 		KeyName:      aws.String("go-aws-ec2"),
@@ -87,7 +96,7 @@ func createEC2(ctx context.Context, region string) (string, error) {
 			},
 		},
 		},
-	})
+	}, ec2Client)
 
 	if err != nil {
 		return "", fmt.Errorf("RunInstance error: %s", err)
