@@ -33,4 +33,11 @@ func main() {
 		fmt.Printf("List of Pods in Namespace %s : %s \n", namespace, pods)
 	}
 
+	deployResult, err := kubefunctions.CreateDeployment(ctx, clientset)
+
+	if err != nil {
+		log.Fatalf("Error in deployment : %v", err)
+	}
+
+	fmt.Printf("result of deploy %s\n", deployResult)
 }
