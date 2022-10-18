@@ -2,7 +2,7 @@ server:
   port: 9010
 
 database:
-  dbhost: localhost
+  dbhost: host.docker.internal
   dbport: 3306
   dbname: "gotest"
   dbuser: "root"
