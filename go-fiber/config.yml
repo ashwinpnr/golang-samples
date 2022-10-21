@@ -1,0 +1,9 @@
+server:
+  port: 9010
+
+database:
+  dbhost: localhost
+  dbport: 3306
+  dbname: "gotest"
+  dbuser: "root"
+  dbpassword: ""
