@@ -11,4 +11,6 @@ func RegisterBookStoreRoutes(app *fiber.App) {
 	app.Post("/api/v1//book", controllers.CreateBook)
 	app.Put("/api/v1//book/:id", controllers.UpdateBook)
 	app.Delete("/api/v1//book/:id", controllers.DeleteBook)
+	app.Get("/live", controllers.GetLive)
+	app.Get("/ready", controllers.GetReady)
 }

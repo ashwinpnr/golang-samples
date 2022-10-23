@@ -13,7 +13,7 @@ func main() {
 
 	app := fiber.New()
 	routes.RegisterBookStoreRoutes(app)
-	log.Printf("Starting Server")
+	log.Printf("Starting the service in port : %d", config.GetConfig().Server.Port)
 	serveraddr := ":" + strconv.Itoa(config.GetConfig().Server.Port)
 	if err := app.Listen(serveraddr); err != nil {
 		log.Fatal(err)

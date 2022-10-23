@@ -14,6 +14,11 @@ type Book struct {
 	Publication string `json:"publication"`
 }
 
+func (b *Book) ToString() string {
+	bookStr := "Name : " + b.Name + " Author : " + b.Author + " Publication : " + b.Publication
+	return bookStr
+}
+
 func init() {
 	config.ConnectDB()
 	DB = config.GetDBConn()
